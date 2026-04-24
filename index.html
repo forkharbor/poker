@@ -49,28 +49,40 @@
     }
     .dealer-info-text { font-size: 0.6rem; color: rgba(255,255,255,0.28); }
 
+    /* テーブル中央：自分のポジション表示 */
+    .table-pos-label {
+      font-size: 0.5rem; color: rgba(255,255,255,0.38);
+      letter-spacing: 0.1em; line-height: 1;
+    }
+    .my-pos-badge {
+      display: inline-block;
+      font-size: 1.05rem; font-weight: bold;
+      padding: 1px 9px; border-radius: 6px;
+      line-height: 1.55; margin-top: 1px;
+    }
+
     /* テーブル内の人数コントロール */
     .table-controls {
       display: flex;
       align-items: center;
       gap: 8px;
       pointer-events: all;
-      margin-top: 2px;
+      margin-top: 3px;
     }
     .table-count-btn {
-      width: 24px; height: 24px;
+      width: 32px; height: 32px;
       border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.25);
-      background: rgba(0,0,0,0.35);
-      color: rgba(255,255,255,0.85);
-      font-size: 1rem; line-height: 1;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(0,0,0,0.4);
+      color: rgba(255,255,255,0.9);
+      font-size: 1.2rem; line-height: 1;
       cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       transition: background 0.15s;
     }
-    .table-count-btn:active  { background: rgba(0,0,0,0.6); }
+    .table-count-btn:active  { background: rgba(0,0,0,0.65); }
     .table-count-btn:disabled { opacity: 0.25; pointer-events: none; }
     .table-count-num {
       font-size: 1.15rem; font-weight: bold;
@@ -78,6 +90,24 @@
       min-width: 1.5rem; text-align: center; line-height: 1;
     }
     .table-count-unit { font-size: 0.62rem; color: rgba(255,255,255,0.45); }
+
+    /* MEドット */
+    .me-dot {
+      position: absolute; top: 3px; right: 4px;
+      width: 11px; height: 11px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.06);
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+    .seat.is-me .me-dot {
+      background: #22d3ee; border-color: #22d3ee;
+      box-shadow: 0 0 5px rgba(34,211,238,0.6);
+    }
+    .seat.is-me {
+      border-color: #0891b2;
+      box-shadow: 0 0 10px rgba(34,211,238,0.35);
+    }
 
     /* ── シートカード ── */
     .seat {
@@ -241,8 +271,8 @@
   <div class="table-wrap" id="table-wrap">
     <div class="poker-table">
       <div class="table-inner-text">
-        <span class="table-title-text">Texas Hold'em</span>
-        <span class="dealer-info-text" id="dealer-info"></span>
+        <span class="table-pos-label">あなた</span>
+        <span id="my-pos-badge" class="my-pos-badge badge-btn">?</span>
         <div class="table-controls">
           <button class="table-count-btn" id="btn-minus" onclick="changeCount(-1)">−</button>
           <span class="table-count-num" id="player-num">6</span>
@@ -327,6 +357,7 @@
 
   let playerCount = 6;
   let dealerSeat  = 1;
+  let mySeat      = 1;
   let myCards     = [null, null];
   let activeSlot  = 0;
   let pendingRank = null;
@@ -345,7 +376,7 @@
   const docRef = db.collection('data').doc('amuse-counter');
 
   function save() {
-    docRef.set({ playerCount, dealerSeat, myCards })
+    docRef.set({ playerCount, dealerSeat, mySeat, myCards })
       .catch(err => console.error('保存エラー:', err.message));
   }
 
@@ -363,21 +394,29 @@
     document.getElementById('player-num').textContent = playerCount;
     document.getElementById('btn-minus').disabled = playerCount <= 2;
     document.getElementById('btn-plus').disabled  = playerCount >= 10;
-    document.getElementById('dealer-info').textContent = `Dealer: Seat ${dealerSeat}`;
 
     const wrap = document.getElementById('table-wrap');
     wrap.querySelectorAll('.seat').forEach(el => el.remove());
 
     const positions = POS_MAP[playerCount];
+
+    // 自分のポジションをテーブル中央に表示
+    const myOffset = (mySeat - dealerSeat + playerCount) % playerCount;
+    const myPos    = positions[myOffset];
+    const badge    = document.getElementById('my-pos-badge');
+    badge.className   = `my-pos-badge ${BADGE_CLASS[myPos.key]}`;
+    badge.textContent = myPos.label;
+
     for (let i = 0; i < playerCount; i++) {
       const seatNum = i + 1;
       const offset  = (seatNum - dealerSeat + playerCount) % playerCount;
       const pos     = positions[offset];
       const isBtn   = offset === 0;
+      const isMe    = seatNum === mySeat;
       const { x, y } = seatPos(i, playerCount);
 
       const div = document.createElement('div');
-      div.className = 'seat' + (isBtn ? ' is-btn' : '');
+      div.className = 'seat' + (isBtn ? ' is-btn' : '') + (isMe ? ' is-me' : '');
       div.style.left = x + 'px';
       div.style.top  = y + 'px';
       div.onclick = () => { dealerSeat = seatNum; render(); save(); };
@@ -385,10 +424,16 @@
         <div class="seat-num-label">Seat ${seatNum}</div>
         <span class="seat-badge ${BADGE_CLASS[pos.key]}">${pos.label}</span>
         ${isBtn ? '<span class="dealer-chip-icon">🪙</span>' : ''}
+        <span class="me-dot" title="自分のシート" onclick="event.stopPropagation(); setMySeat(${seatNum})"></span>
       `;
       wrap.appendChild(div);
     }
     renderHandBar();
+  }
+
+  function setMySeat(seatNum) {
+    mySeat = seatNum;
+    render(); save();
   }
 
   function renderHandBar() {
@@ -496,6 +541,7 @@
       const d = snap.data();
       playerCount = d.playerCount ?? 6;
       dealerSeat  = d.dealerSeat  ?? 1;
+      mySeat      = d.mySeat      ?? 1;
       myCards     = d.myCards     ?? [null, null];
     }
     render();
