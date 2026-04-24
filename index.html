@@ -49,16 +49,29 @@
     }
     .dealer-info-text { font-size: 0.6rem; color: rgba(255,255,255,0.28); }
 
-    /* テーブル中央：自分のポジション表示 */
-    .table-pos-label {
-      font-size: 0.5rem; color: rgba(255,255,255,0.38);
-      letter-spacing: 0.1em; line-height: 1;
+    /* 自分のポジションバー */
+    .my-pos-bar {
+      flex-shrink: 0;
+      background: #111827;
+      border: 1px solid #1e2a3a;
+      border-radius: 14px;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 420px;
+      width: 100%;
+      align-self: center;
+    }
+    .my-pos-bar-label {
+      font-size: 0.68rem; color: #4a5568;
+      font-weight: bold; letter-spacing: 0.05em;
     }
     .my-pos-badge {
       display: inline-block;
-      font-size: 1.05rem; font-weight: bold;
-      padding: 1px 9px; border-radius: 6px;
-      line-height: 1.55; margin-top: 1px;
+      font-size: 1.1rem; font-weight: bold;
+      padding: 2px 14px; border-radius: 7px;
+      line-height: 1.6;
     }
 
     /* テーブル内の人数コントロール */
@@ -277,10 +290,14 @@
           <span class="table-count-unit">人</span>
           <button class="table-count-btn" id="btn-plus" onclick="changeCount(+1)">＋</button>
         </div>
-        <span class="table-pos-label">あなた</span>
-        <span id="my-pos-badge" class="my-pos-badge badge-btn">?</span>
       </div>
     </div>
+  </div>
+
+  <!-- 自分のポジション -->
+  <div class="my-pos-bar" id="my-pos-bar">
+    <span class="my-pos-bar-label">あなたのポジション</span>
+    <span id="my-pos-badge" class="my-pos-badge badge-btn">?</span>
   </div>
 
   <!-- 自分のハンド -->
