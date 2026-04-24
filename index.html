@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ポジションカウンター</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+      background: #0a0e1a;
+      color: #d1d9e6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 28px 16px 64px;
+    }
+
+    h1 {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #e0e6f0;
+      letter-spacing: 0.05em;
+      margin-bottom: 20px;
+    }
+
+    /* ── 人数セレクター ── */
+    .player-selector {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: #111827;
+      border: 1px solid #1e2a3a;
+      border-radius: 14px;
+      padding: 10px 20px;
+      margin-bottom: 24px;
+    }
+    .player-label {
+      font-size: 0.72rem;
+      color: #4a90d9;
+      font-weight: bold;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .count-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid #2a3a50;
+      background: #0d1420;
+      color: #d1d9e6;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .count-btn:active { background: #1a2a45; }
+    .count-btn:disabled { opacity: 0.25; cursor: default; }
+    .player-num { font-size: 2rem; font-weight: bold; color: #e0e6f0; min-width: 2.4rem; text-align: center; line-height: 1; }
+    .player-unit { font-size: 0.8rem; color: #4a5568; align-self: flex-end; padding-bottom: 3px; }
+
+    /* ── テーブルエリア ── */
+    .table-wrap {
+      position: relative;
+      width: 310px; height: 260px;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+    .poker-table {
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      width: 194px; height: 130px;
+      border-radius: 65px;
+      background: radial-gradient(ellipse at 40% 35%, #1a5c2a, #0d3318);
+      box-shadow: 0 0 0 5px #2a1800, 0 0 0 9px #7a5a10, 0 0 0 11px #4a3808, 0 4px 32px rgba(0,0,0,0.7);
+    }
+    .table-inner-text {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+      pointer-events: none;
+    }
+    .table-title-text { font-size: 0.6rem; font-weight: bold; color: rgba(255,255,255,0.18); letter-spacing: 0.14em; text-transform: uppercase; }
+    .dealer-info-text  { font-size: 0.62rem; color: rgba(255,255,255,0.22); }
+
+    /* ── シートカード ── */
+    .seat {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 70px;
+      background: #111827;
+      border: 1px solid #1e2a3a;
+      border-radius: 10px;
+      padding: 5px 5px 6px;
+      text-align: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    }
+    .seat:active { background: #1a2a40; }
+    .seat.is-btn { border-color: #f59e0b; background: #1c1408; box-shadow: 0 0 10px rgba(245,158,11,0.35); }
+    .seat-num-label { font-size: 0.58rem; color: #4a5568; line-height: 1; margin-bottom: 2px; }
+    .seat.is-btn .seat-num-label { color: #a07820; }
+    .seat-badge { display: inline-block; font-size: 0.78rem; font-weight: bold; padding: 1px 5px; border-radius: 5px; line-height: 1.5; }
+    .dealer-chip-icon { font-size: 0.75rem; line-height: 1; margin-top: 1px; display: block; }
+
+    .badge-btn  { background:#2c1f00; color:#f59e0b; }
+    .badge-sb   { background:#0e1e40; color:#60a5fa; }
+    .badge-bb   { background:#2a0d0d; color:#f87171; }
+    .badge-utg  { background:#0a2010; color:#4ade80; }
+    .badge-utg1 { background:#081a0e; color:#34d399; }
+    .badge-utg2 { background:#061510; color:#2dd4bf; }
+    .badge-mp   { background:#1a0a2e; color:#c084fc; }
+    .badge-lj   { background:#160826; color:#a855f7; }
+    .badge-hj   { background:#1f0e00; color:#fb923c; }
+    .badge-co   { background:#001a1a; color:#2dd4bf; }
+
+    /* ── 自分のハンド ── */
+    .my-hand-section {
+      width: 100%;
+      max-width: 310px;
+      background: #111827;
+      border: 1px solid #1e2a3a;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+    .my-hand-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .my-hand-label {
+      font-size: 0.72rem;
+      color: #4a90d9;
+      font-weight: bold;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .hand-clear-btn {
+      font-size: 0.65rem;
+      color: #4a5568;
+      background: none;
+      border: 1px solid #2a3a50;
+      border-radius: 5px;
+      padding: 3px 9px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.15s;
+    }
+    .hand-clear-btn:hover { color: #f87171; border-color: #f87171; }
+
+    .card-slots {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .card-slot {
+      width: 80px; height: 58px;
+      border: 2px dashed #2a3a50;
+      border-radius: 10px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      cursor: pointer;
+      gap: 2px;
+      transition: border-color 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .card-slot.active  { border-color: #2563eb; background: #0e1e40; }
+    .card-slot.filled  { border-style: solid; border-color: #2a4a6a; background: #0d1a2a; }
+    .card-slot.filled.active { border-color: #2563eb; }
+    .slot-label { font-size: 0.6rem; color: #4a5568; }
+    .slot-card-text { font-size: 1.5rem; font-weight: bold; line-height: 1; }
+    .slot-card-text.red   { color: #f87171; }
+    .slot-card-text.black { color: #e0e6f0; }
+
+    /* ── カードピッカー（インライン展開） ── */
+    .card-picker {
+      display: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #1e2a3a;
+    }
+    .card-picker.open { display: block; }
+
+    .picker-label { font-size: 0.68rem; color: #4a5568; margin-bottom: 8px; font-weight: bold; letter-spacing: 0.04em; }
+    .rank-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+    .rank-btn, .suit-btn {
+      padding: 8px 0;
+      background: #0d1420;
+      border: 1px solid #2a3a50;
+      border-radius: 7px;
+      color: #d1d9e6;
+      font-size: 0.88rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.1s, border-color 0.1s;
+      -webkit-tap-highlight-color: transparent;
+      font-family: inherit;
+    }
+    .rank-btn:active, .suit-btn:active { background: #1a2a45; }
+    .rank-btn.selected { background: #1d3460; border-color: #2563eb; color: #93c5fd; }
+    .rank-btn.disabled { opacity: 0.22; cursor: default; pointer-events: none; }
+
+    .suit-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .suit-btn { font-size: 1.3rem; padding: 10px 0; }
+    .suit-btn.red   { color: #f87171; }
+    .suit-btn.black { color: #e0e6f0; }
+    .suit-btn.disabled { opacity: 0.22; cursor: default; pointer-events: none; }
+
+    /* ── 次のハンドボタン ── */
+    .next-btn {
+      width: 100%; max-width: 310px;
+      padding: 13px;
+      background: #1d4ed8; color: white;
+      border: none; border-radius: 10px;
+      font-size: 0.95rem; font-weight: bold;
+      cursor: pointer; letter-spacing: 0.04em;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      font-family: inherit;
+    }
+    .next-btn:active { background: #1e3a9f; }
+    .hint { font-size: 0.7rem; color: #2a3a50; text-align: center; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <h1>🃏 ポジションカウンター</h1>
+
+  <div class="player-selector">
+    <span class="player-label">人数</span>
+    <button class="count-btn" id="btn-minus" onclick="changeCount(-1)">−</button>
+    <span class="player-num" id="player-num">6</span>
+    <span class="player-unit">人</span>
+    <button class="count-btn" id="btn-plus" onclick="changeCount(+1)">＋</button>
+  </div>
+
+  <div class="table-wrap" id="table-wrap">
+    <div class="poker-table">
+      <div class="table-inner-text">
+        <span class="table-title-text">Texas Hold'em</span>
+        <span class="dealer-info-text" id="dealer-info"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 自分のハンド -->
+  <div class="my-hand-section">
+    <div class="my-hand-header">
+      <span class="my-hand-label">🂠 自分のハンド</span>
+      <button class="hand-clear-btn" onclick="clearHand()">クリア</button>
+    </div>
+    <div class="card-slots">
+      <div class="card-slot active" id="slot-0" onclick="selectSlot(0)">
+        <span class="slot-label">1枚目</span>
+        <span class="slot-card-text" id="slot-0-text">　</span>
+      </div>
+      <div class="card-slot" id="slot-1" onclick="selectSlot(1)">
+        <span class="slot-label">2枚目</span>
+        <span class="slot-card-text" id="slot-1-text">　</span>
+      </div>
+    </div>
+    <div class="card-picker open" id="card-picker">
+      <div class="picker-label">ランク</div>
+      <div class="rank-grid" id="rank-grid"></div>
+      <div class="picker-label">スーツ</div>
+      <div class="suit-grid">
+        <button class="suit-btn black" data-suit="♠" onclick="selectSuit('♠')">♠</button>
+        <button class="suit-btn red"   data-suit="♥" onclick="selectSuit('♥')">♥</button>
+        <button class="suit-btn red"   data-suit="♦" onclick="selectSuit('♦')">♦</button>
+        <button class="suit-btn black" data-suit="♣" onclick="selectSuit('♣')">♣</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="next-btn" onclick="nextHand()">次のハンド →</button>
+  <p class="hint">シートをタップしてディーラー変更</p>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  const RANKS    = ['A','K','Q','J','T','9','8','7','6','5','4','3','2'];
+  const RED_SUITS = new Set(['♥','♦']);
+
+  const POS_MAP = {
+    2:  [{key:'btn',label:'BTN'},{key:'bb',label:'BB'}],
+    3:  [{key:'btn',label:'BTN'},{key:'sb',label:'SB'},{key:'bb',label:'BB'}],
+    4:  [{key:'btn',label:'BTN'},{key:'sb',label:'SB'},{key:'bb',label:'BB'},{key:'utg',label:'UTG'}],
+    5:  [{key:'btn',label:'BTN'},{key:'sb',label:'SB'},{key:'bb',label:'BB'},{key:'utg',label:'UTG'},{key:'co',label:'CO'}],
+    6:  [{key:'btn',label:'BTN'},{key:'sb',label:'SB'},{key:'bb',label:'BB'},{key:'utg',label:'UTG'},{key:'hj',label:'HJ'},{key:'co',label:'CO'}],
+    7:  [{key:'btn',label:'BTN'},{key:'sb',label:'SB'},{key:'bb',label:'BB'},{key:'utg',label:'UTG'},{key:'mp',label:'MP'},{key:'hj',label:'HJ'},{key:'co',label:'CO'}],
+    8:  [{key:'btn',label:'BTN'},{key:'sb',label:'SB'},{key:'bb',label:'BB'},{key:'utg',label:'UTG'},{key:'utg1',label:'UTG+1'},{key:'mp',label:'MP'},{key:'hj',label:'HJ'},{key:'co',label:'CO'}],
+    9:  [{key:'btn',label:'BTN'},{key:'sb',label:'SB'},{key:'bb',label:'BB'},{key:'utg',label:'UTG'},{key:'utg1',label:'UTG+1'},{key:'mp',label:'MP'},{key:'lj',label:'LJ'},{key:'hj',label:'HJ'},{key:'co',label:'CO'}],
+    10: [{key:'btn',label:'BTN'},{key:'sb',label:'SB'},{key:'bb',label:'BB'},{key:'utg',label:'UTG'},{key:'utg1',label:'UTG+1'},{key:'utg2',label:'UTG+2'},{key:'mp',label:'MP'},{key:'lj',label:'LJ'},{key:'hj',label:'HJ'},{key:'co',label:'CO'}],
+  };
+  const BADGE_CLASS = {
+    btn:'badge-btn',sb:'badge-sb',bb:'badge-bb',utg:'badge-utg',utg1:'badge-utg1',
+    utg2:'badge-utg2',mp:'badge-mp',lj:'badge-lj',hj:'badge-hj',co:'badge-co',
+  };
+
+  const CX = 155, CY = 130, RX = 118, RY = 105;
+
+  let playerCount = 6;
+  let dealerSeat  = 1;
+
+  // 自分のハンド
+  let myCards    = [null, null];
+  let activeSlot = 0;
+  let pendingRank = null;
+
+  /* ── Firebase ── */
+  firebase.initializeApp({
+    apiKey: "AIzaSyCfvqQWLB8NJqmaH0k2G0wPcbJJjz2Vu4A",
+    authDomain: "kaimemo-58bad.firebaseapp.com",
+    projectId: "kaimemo-58bad",
+    storageBucket: "kaimemo-58bad.firebasestorage.app",
+    messagingSenderId: "308069117698",
+    appId: "1:308069117698:web:c61a57853abb7e8ffb1c1b"
+  });
+  const db     = firebase.firestore();
+  const docRef = db.collection('data').doc('amuse-counter');
+
+  function save() {
+    docRef.set({ playerCount, dealerSeat, myCards })
+      .catch(err => console.error('保存エラー:', err.message));
+  }
+
+  /* ── テーブル描画 ── */
+  function seatPos(idx, total) {
+    const angle = (idx / total) * 2 * Math.PI - Math.PI / 2;
+    return { x: CX + RX * Math.cos(angle), y: CY + RY * Math.sin(angle) };
+  }
+
+  function render() {
+    document.getElementById('player-num').textContent = playerCount;
+    document.getElementById('btn-minus').disabled = playerCount <= 2;
+    document.getElementById('btn-plus').disabled  = playerCount >= 10;
+    document.getElementById('dealer-info').textContent = `Dealer: Seat ${dealerSeat}`;
+
+    const wrap = document.getElementById('table-wrap');
+    wrap.querySelectorAll('.seat').forEach(el => el.remove());
+
+    const positions = POS_MAP[playerCount];
+    for (let i = 0; i < playerCount; i++) {
+      const seatNum = i + 1;
+      const offset  = (seatNum - dealerSeat + playerCount) % playerCount;
+      const pos     = positions[offset];
+      const isBtn   = offset === 0;
+      const { x, y } = seatPos(i, playerCount);
+
+      const div = document.createElement('div');
+      div.className = 'seat' + (isBtn ? ' is-btn' : '');
+      div.style.left = x + 'px';
+      div.style.top  = y + 'px';
+      div.onclick = () => setDealer(seatNum);
+      div.innerHTML = `
+        <div class="seat-num-label">Seat ${seatNum}</div>
+        <span class="seat-badge ${BADGE_CLASS[pos.key]}">${pos.label}</span>
+        ${isBtn ? '<span class="dealer-chip-icon">🪙</span>' : ''}
+      `;
+      wrap.appendChild(div);
+    }
+  }
+
+  function changeCount(delta) {
+    const next = playerCount + delta;
+    if (next < 2 || next > 10) return;
+    playerCount = next;
+    if (dealerSeat > playerCount) dealerSeat = playerCount;
+    render(); save();
+  }
+
+  function setDealer(seat) {
+    dealerSeat = seat;
+    render(); save();
+  }
+
+  function nextHand() {
+    dealerSeat = (dealerSeat % playerCount) + 1;
+    myCards = [null, null]; pendingRank = null; activeSlot = 0;
+    render(); refreshPicker(); save();
+  }
+
+  /* ── 手札入力 ── */
+  function selectSlot(idx) {
+    activeSlot  = idx;
+    pendingRank = null;
+    refreshPicker();
+  }
+
+  function selectRank(rank) {
+    pendingRank = rank;
+    refreshPicker();
+  }
+
+  function selectSuit(suit) {
+    if (!pendingRank) return;
+    myCards[activeSlot] = { rank: pendingRank, suit };
+    pendingRank = null;
+    const other = 1 - activeSlot;
+    if (!myCards[other]) activeSlot = other;
+    refreshPicker(); save();
+  }
+
+  function clearHand() {
+    myCards     = [null, null];
+    pendingRank = null;
+    activeSlot  = 0;
+    refreshPicker(); save();
+  }
+
+  function refreshPicker() {
+    // スロット表示
+    for (let i = 0; i < 2; i++) {
+      const slotEl = document.getElementById(`slot-${i}`);
+      const textEl = document.getElementById(`slot-${i}-text`);
+      const card   = myCards[i];
+      const active = activeSlot === i;
+
+      slotEl.className = 'card-slot' +
+        (card ? ' filled' : '') + (active ? ' active' : '');
+
+      if (card) {
+        textEl.className   = 'slot-card-text ' + (RED_SUITS.has(card.suit) ? 'red' : 'black');
+        textEl.textContent = card.rank + card.suit;
+      } else if (pendingRank && active) {
+        textEl.className   = 'slot-card-text black';
+        textEl.textContent = pendingRank + ' ?';
+      } else {
+        textEl.className   = 'slot-card-text';
+        textEl.textContent = '　';
+      }
+    }
+
+    // 使用済みカード（もう一方のスロットに入っているカード）
+    const other     = 1 - activeSlot;
+    const otherCard = myCards[other];
+    const usedCard  = otherCard ? otherCard.rank + otherCard.suit : null;
+
+    // ランクボタン
+    document.getElementById('rank-grid').innerHTML = RANKS.map(r => {
+      const isSelected = pendingRank === r;
+      // 同ランク4スーツ全滅なら disabled（実際には1枚しか使えないのでほぼ起きない）
+      return `<button class="rank-btn${isSelected ? ' selected' : ''}" onclick="selectRank('${r}')">${r}</button>`;
+    }).join('');
+
+    // スーツボタン
+    document.querySelectorAll('.suit-btn').forEach(btn => {
+      const s       = btn.dataset.suit;
+      const thisCard = pendingRank ? pendingRank + s : null;
+      const isUsed  = thisCard && thisCard === usedCard;
+      btn.classList.toggle('disabled', !!isUsed);
+      btn.style.pointerEvents = isUsed ? 'none' : '';
+    });
+  }
+
+  /* ── 初期ロード ── */
+  docRef.onSnapshot(snap => {
+    if (snap.exists) {
+      const d = snap.data();
+      playerCount = d.playerCount ?? 6;
+      dealerSeat  = d.dealerSeat  ?? 1;
+      myCards     = d.myCards     ?? [null, null];
+    }
+    render();
+    refreshPicker();
+  });
+</script>
+</body>
+</html>
