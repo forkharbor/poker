@@ -12,82 +12,72 @@
       font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
       background: #0a0e1a;
       color: #d1d9e6;
-      min-height: 100dvh;
+      height: 100dvh;
       display: flex;
       flex-direction: column;
-      padding: 16px 16px 20px;
-      gap: 12px;
-    }
-
-    /* ── ヘッダー行 ── */
-    .header-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-    }
-    .app-title {
-      font-size: 1.05rem;
-      font-weight: bold;
-      color: #e0e6f0;
-      letter-spacing: 0.04em;
-    }
-    .player-control {
-      display: flex;
-      align-items: center;
+      padding: 12px 16px 16px;
       gap: 10px;
-      background: #111827;
-      border: 1px solid #1e2a3a;
-      border-radius: 12px;
-      padding: 6px 14px;
+      overflow: hidden;
     }
-    .count-btn {
-      width: 30px; height: 30px;
-      border-radius: 50%;
-      border: 1px solid #2a3a50;
-      background: #0d1420;
-      color: #d1d9e6;
-      font-size: 1.2rem;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-      transition: background 0.15s;
-    }
-    .count-btn:active { background: #1a2a45; }
-    .count-btn:disabled { opacity: 0.25; cursor: default; }
-    .player-num {
-      font-size: 1.4rem; font-weight: bold; color: #e0e6f0;
-      min-width: 1.8rem; text-align: center; line-height: 1;
-    }
-    .player-unit { font-size: 0.72rem; color: #4a5568; }
 
     /* ── テーブルエリア ── */
     .table-wrap {
       position: relative;
       flex: 1;
-      min-height: 210px;
-      max-height: 300px;
+      min-height: 0;
       width: 100%;
-      max-width: 360px;
+      max-width: 420px;
       align-self: center;
     }
     .poker-table {
       position: absolute;
       left: 50%; top: 50%;
       transform: translate(-50%, -50%);
-      width: 180px; height: 118px;
-      border-radius: 59px;
+      width: 190px; height: 124px;
+      border-radius: 62px;
       background: radial-gradient(ellipse at 40% 35%, #1a5c2a, #0d3318);
-      box-shadow: 0 0 0 5px #2a1800, 0 0 0 8px #7a5a10, 0 0 0 10px #4a3808, 0 4px 28px rgba(0,0,0,0.7);
+      box-shadow: 0 0 0 5px #2a1800, 0 0 0 9px #7a5a10, 0 0 0 11px #4a3808, 0 4px 28px rgba(0,0,0,0.7);
     }
     .table-inner-text {
       position: absolute; inset: 0;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
       pointer-events: none;
     }
-    .table-title-text { font-size: 0.55rem; font-weight: bold; color: rgba(255,255,255,0.18); letter-spacing: 0.14em; text-transform: uppercase; }
-    .dealer-info-text  { font-size: 0.6rem; color: rgba(255,255,255,0.25); }
+    .table-title-text {
+      font-size: 0.55rem; font-weight: bold;
+      color: rgba(255,255,255,0.18); letter-spacing: 0.14em; text-transform: uppercase;
+    }
+    .dealer-info-text { font-size: 0.6rem; color: rgba(255,255,255,0.28); }
+
+    /* テーブル内の人数コントロール */
+    .table-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      pointer-events: all;
+      margin-top: 2px;
+    }
+    .table-count-btn {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(0,0,0,0.35);
+      color: rgba(255,255,255,0.85);
+      font-size: 1rem; line-height: 1;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .table-count-btn:active  { background: rgba(0,0,0,0.6); }
+    .table-count-btn:disabled { opacity: 0.25; pointer-events: none; }
+    .table-count-num {
+      font-size: 1.15rem; font-weight: bold;
+      color: rgba(255,255,255,0.92);
+      min-width: 1.5rem; text-align: center; line-height: 1;
+    }
+    .table-count-unit { font-size: 0.62rem; color: rgba(255,255,255,0.45); }
 
     /* ── シートカード ── */
     .seat {
@@ -122,7 +112,7 @@
     .badge-hj   { background:#1f0e00; color:#fb923c; }
     .badge-co   { background:#001a1a; color:#2dd4bf; }
 
-    /* ── 自分のハンド（コンパクト） ── */
+    /* ── 自分のハンド ── */
     .hand-bar {
       flex-shrink: 0;
       background: #111827;
@@ -132,37 +122,26 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      max-width: 360px;
+      max-width: 420px;
       width: 100%;
       align-self: center;
     }
     .hand-bar-label {
-      font-size: 0.68rem;
-      color: #4a90d9;
-      font-weight: bold;
-      letter-spacing: 0.05em;
-      white-space: nowrap;
-      flex-shrink: 0;
+      font-size: 0.68rem; color: #4a90d9;
+      font-weight: bold; letter-spacing: 0.05em;
+      white-space: nowrap; flex-shrink: 0;
     }
-    .card-slots {
-      display: flex;
-      gap: 8px;
-      flex: 1;
-      justify-content: center;
-    }
+    .card-slots { display: flex; gap: 8px; flex: 1; justify-content: center; }
     .card-slot {
       width: 72px; height: 46px;
-      border: 2px dashed #2a3a50;
-      border-radius: 9px;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      cursor: pointer;
-      gap: 1px;
+      border: 2px dashed #2a3a50; border-radius: 9px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; gap: 1px;
       transition: border-color 0.15s, background 0.15s;
       -webkit-tap-highlight-color: transparent;
     }
-    .card-slot.filled   { border-style: solid; border-color: #2a4a6a; background: #0d1a2a; }
-    .card-slot:active   { background: #1a2a40; }
+    .card-slot.filled { border-style: solid; border-color: #2a4a6a; background: #0d1a2a; }
+    .card-slot:active { background: #1a2a40; }
     .slot-label { font-size: 0.55rem; color: #4a5568; }
     .slot-card-text { font-size: 1.25rem; font-weight: bold; line-height: 1; }
     .slot-card-text.red   { color: #f87171; }
@@ -172,8 +151,7 @@
       background: none; border: 1px solid #2a3a50;
       border-radius: 5px; padding: 4px 8px;
       cursor: pointer; font-family: inherit;
-      flex-shrink: 0; transition: color 0.15s;
-      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0; -webkit-tap-highlight-color: transparent;
     }
     .hand-clear-btn:active { color: #f87171; }
 
@@ -188,28 +166,22 @@
       transition: background 0.15s;
       -webkit-tap-highlight-color: transparent;
       font-family: inherit;
-      max-width: 360px; width: 100%; align-self: center;
+      max-width: 420px; width: 100%; align-self: center;
     }
     .next-btn:active { background: #1e3a9f; }
 
     /* ── カード入力モーダル ── */
     .modal-overlay {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.65);
-      z-index: 100;
-      align-items: flex-end;
-      justify-content: center;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.65); z-index: 100;
+      align-items: flex-end; justify-content: center;
     }
     .modal-overlay.open { display: flex; }
-
     .modal-sheet {
-      background: #111827;
-      border: 1px solid #1e2a3a;
+      background: #111827; border: 1px solid #1e2a3a;
       border-radius: 20px 20px 0 0;
       padding: 18px 18px 32px;
-      width: 100%;
-      max-width: 420px;
+      width: 100%; max-width: 420px;
       animation: slideUp 0.2s ease;
     }
     @keyframes slideUp {
@@ -218,13 +190,10 @@
     }
     .modal-drag { width: 36px; height: 4px; background: #2a3a50; border-radius: 2px; margin: 0 auto 14px; }
     .modal-title { font-size: 0.75rem; color: #4a90d9; font-weight: bold; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px; text-align: center; }
-
-    /* モーダル内スロット */
     .modal-slots { display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; }
     .modal-slot {
       width: 80px; height: 54px;
-      border: 2px dashed #2a3a50;
-      border-radius: 10px;
+      border: 2px dashed #2a3a50; border-radius: 10px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       cursor: pointer; gap: 2px;
       transition: border-color 0.15s, background 0.15s;
@@ -237,11 +206,8 @@
     .modal-slot-text  { font-size: 1.4rem; font-weight: bold; line-height: 1; }
     .modal-slot-text.red   { color: #f87171; }
     .modal-slot-text.black { color: #e0e6f0; }
-
     .picker-label { font-size: 0.65rem; color: #4a5568; margin-bottom: 7px; font-weight: bold; letter-spacing: 0.04em; }
-    .rank-grid {
-      display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 10px;
-    }
+    .rank-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 10px; }
     .rank-btn, .suit-btn {
       padding: 9px 0; background: #0d1420; border: 1px solid #2a3a50;
       border-radius: 7px; color: #d1d9e6; font-size: 0.88rem; font-weight: bold;
@@ -255,18 +221,15 @@
     .suit-btn.red   { color: #f87171; }
     .suit-btn.black { color: #e0e6f0; }
     .suit-btn.disabled { opacity: 0.22; pointer-events: none; }
-
     .modal-actions { display: flex; gap: 10px; }
     .modal-clear-btn {
-      flex: 1; padding: 11px;
-      background: none; border: 1px solid #2a3a50; border-radius: 9px;
-      color: #8899aa; font-size: 0.85rem; font-weight: bold;
+      flex: 1; padding: 11px; background: none; border: 1px solid #2a3a50;
+      border-radius: 9px; color: #8899aa; font-size: 0.85rem; font-weight: bold;
       cursor: pointer; font-family: inherit;
     }
     .modal-done-btn {
-      flex: 2; padding: 11px;
-      background: #1d4ed8; border: none; border-radius: 9px;
-      color: white; font-size: 0.85rem; font-weight: bold;
+      flex: 2; padding: 11px; background: #1d4ed8; border: none;
+      border-radius: 9px; color: white; font-size: 0.85rem; font-weight: bold;
       cursor: pointer; font-family: inherit;
     }
     .modal-done-btn:active { background: #1e3a9f; }
@@ -274,23 +237,18 @@
 </head>
 <body>
 
-  <!-- ヘッダー -->
-  <div class="header-row">
-    <span class="app-title">🃏</span>
-    <div class="player-control">
-      <button class="count-btn" id="btn-minus" onclick="changeCount(-1)">−</button>
-      <span class="player-num" id="player-num">6</span>
-      <span class="player-unit">人</span>
-      <button class="count-btn" id="btn-plus" onclick="changeCount(+1)">＋</button>
-    </div>
-  </div>
-
   <!-- テーブル -->
   <div class="table-wrap" id="table-wrap">
     <div class="poker-table">
       <div class="table-inner-text">
         <span class="table-title-text">Texas Hold'em</span>
         <span class="dealer-info-text" id="dealer-info"></span>
+        <div class="table-controls">
+          <button class="table-count-btn" id="btn-minus" onclick="changeCount(-1)">−</button>
+          <span class="table-count-num" id="player-num">6</span>
+          <span class="table-count-unit">人</span>
+          <button class="table-count-btn" id="btn-plus" onclick="changeCount(+1)">＋</button>
+        </div>
       </div>
     </div>
   </div>
@@ -318,7 +276,7 @@
   <div class="modal-overlay" id="modal-overlay" onclick="onOverlayClick(event)">
     <div class="modal-sheet">
       <div class="modal-drag"></div>
-      <div class="modal-title" id="modal-title">手札を選択</div>
+      <div class="modal-title">手札を選択</div>
       <div class="modal-slots">
         <div class="modal-slot active" id="mslot-0" onclick="selectSlot(0)">
           <span class="modal-slot-label">1枚目</span>
@@ -370,11 +328,9 @@
   let playerCount = 6;
   let dealerSeat  = 1;
   let myCards     = [null, null];
-
-  // モーダル状態
-  let activeSlot   = 0;
-  let pendingRank  = null;
-  let modalCards   = [null, null];
+  let activeSlot  = 0;
+  let pendingRank = null;
+  let modalCards  = [null, null];
 
   /* ── Firebase ── */
   firebase.initializeApp({
@@ -395,13 +351,12 @@
 
   /* ── テーブル描画 ── */
   function seatPos(idx, total) {
-    const wrap  = document.getElementById('table-wrap');
-    const W = wrap.offsetWidth  || 310;
-    const H = wrap.offsetHeight || 250;
-    const cx = W / 2, cy = H / 2;
+    const wrap = document.getElementById('table-wrap');
+    const W = wrap.offsetWidth  || 360;
+    const H = wrap.offsetHeight || 300;
     const rx = W * 0.38, ry = H * 0.41;
     const angle = (idx / total) * 2 * Math.PI - Math.PI / 2;
-    return { x: cx + rx * Math.cos(angle), y: cy + ry * Math.sin(angle) };
+    return { x: W / 2 + rx * Math.cos(angle), y: H / 2 + ry * Math.sin(angle) };
   }
 
   function render() {
@@ -433,7 +388,6 @@
       `;
       wrap.appendChild(div);
     }
-
     renderHandBar();
   }
 
@@ -474,8 +428,7 @@
 
   /* ── モーダル ── */
   function openModal(startSlot = 0) {
-    modalCards  = [myCards[0] ? { ...myCards[0] } : null,
-                   myCards[1] ? { ...myCards[1] } : null];
+    modalCards  = [myCards[0] ? { ...myCards[0] } : null, myCards[1] ? { ...myCards[1] } : null];
     activeSlot  = startSlot;
     pendingRank = null;
     document.getElementById('modal-overlay').classList.add('open');
@@ -493,22 +446,12 @@
   }
 
   function clearModalHand() {
-    modalCards  = [null, null];
-    pendingRank = null;
-    activeSlot  = 0;
+    modalCards = [null, null]; pendingRank = null; activeSlot = 0;
     refreshModal();
   }
 
-  function selectSlot(idx) {
-    activeSlot  = idx;
-    pendingRank = null;
-    refreshModal();
-  }
-
-  function selectRank(rank) {
-    pendingRank = rank;
-    refreshModal();
-  }
+  function selectSlot(idx)  { activeSlot = idx; pendingRank = null; refreshModal(); }
+  function selectRank(rank) { pendingRank = rank; refreshModal(); }
 
   function selectSuit(suit) {
     if (!pendingRank) return;
@@ -537,17 +480,13 @@
         textEl.textContent = '　';
       }
     }
-
-    const other    = 1 - activeSlot;
-    const usedCard = modalCards[other] ? modalCards[other].rank + modalCards[other].suit : null;
-
+    const usedCard = modalCards[1 - activeSlot];
+    const usedStr  = usedCard ? usedCard.rank + usedCard.suit : null;
     document.getElementById('rank-grid').innerHTML = RANKS.map(r =>
       `<button class="rank-btn${pendingRank === r ? ' selected' : ''}" onclick="selectRank('${r}')">${r}</button>`
     ).join('');
-
     document.querySelectorAll('.suit-btn').forEach(btn => {
-      const used = pendingRank && (pendingRank + btn.dataset.suit) === usedCard;
-      btn.classList.toggle('disabled', !!used);
+      btn.classList.toggle('disabled', !!(pendingRank && (pendingRank + btn.dataset.suit) === usedStr));
     });
   }
 
