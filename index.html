@@ -49,30 +49,6 @@
     }
     .dealer-info-text { font-size: 0.6rem; color: rgba(255,255,255,0.28); }
 
-    /* 自分のポジションバー */
-    .my-pos-bar {
-      flex-shrink: 0;
-      background: #111827;
-      border: 1px solid #1e2a3a;
-      border-radius: 14px;
-      padding: 8px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 420px;
-      width: 100%;
-      align-self: center;
-    }
-    .my-pos-bar-label {
-      font-size: 0.68rem; color: #4a5568;
-      font-weight: bold; letter-spacing: 0.05em;
-    }
-    .my-pos-badge {
-      display: inline-block;
-      font-size: 1.1rem; font-weight: bold;
-      padding: 2px 14px; border-radius: 7px;
-      line-height: 1.6;
-    }
 
     /* テーブル内の人数コントロール */
     .table-controls {
@@ -294,12 +270,6 @@
     </div>
   </div>
 
-  <!-- 自分のポジション -->
-  <div class="my-pos-bar" id="my-pos-bar">
-    <span class="my-pos-bar-label">あなたのポジション</span>
-    <span id="my-pos-badge" class="my-pos-badge badge-btn">?</span>
-  </div>
-
   <!-- 自分のハンド -->
   <div class="hand-bar">
     <span class="hand-bar-label">🂠 自分のハンド</span>
@@ -403,7 +373,8 @@
     const W = wrap.offsetWidth  || 360;
     const H = wrap.offsetHeight || 300;
     const rx = W * 0.38, ry = H * 0.41;
-    const angle = (idx / total) * 2 * Math.PI - Math.PI / 2;
+    // mySeat が常にテーブル下部（ハンドバー寄り）に来るよう角度をオフセット
+    const angle = ((idx - (mySeat - 1)) / total) * 2 * Math.PI + Math.PI / 2;
     return { x: W / 2 + rx * Math.cos(angle), y: H / 2 + ry * Math.sin(angle) };
   }
 
@@ -416,13 +387,6 @@
     wrap.querySelectorAll('.seat').forEach(el => el.remove());
 
     const positions = POS_MAP[playerCount];
-
-    // 自分のポジションをテーブル中央に表示
-    const myOffset = (mySeat - dealerSeat + playerCount) % playerCount;
-    const myPos    = positions[myOffset];
-    const badge    = document.getElementById('my-pos-badge');
-    badge.className   = `my-pos-badge ${BADGE_CLASS[myPos.key]}`;
-    badge.textContent = myPos.label;
 
     for (let i = 0; i < playerCount; i++) {
       const seatNum = i + 1;
