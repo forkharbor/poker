@@ -131,49 +131,6 @@
     .badge-hj   { background:#1f0e00; color:#fb923c; }
     .badge-co   { background:#001a1a; color:#2dd4bf; }
 
-    /* ── 自分のハンド ── */
-    .hand-bar {
-      flex-shrink: 0;
-      background: #111827;
-      border: 1px solid #1e2a3a;
-      border-radius: 14px;
-      padding: 10px 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      max-width: 420px;
-      width: 100%;
-      align-self: center;
-    }
-    .hand-bar-label {
-      font-size: 0.68rem; color: #4a90d9;
-      font-weight: bold; letter-spacing: 0.05em;
-      white-space: nowrap; flex-shrink: 0;
-    }
-    .card-slots { display: flex; gap: 8px; flex: 1; justify-content: center; }
-    .card-slot {
-      width: 72px; height: 46px;
-      border: 2px dashed #2a3a50; border-radius: 9px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      cursor: pointer; gap: 1px;
-      transition: border-color 0.15s, background 0.15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .card-slot.filled { border-style: solid; border-color: #2a4a6a; background: #0d1a2a; }
-    .card-slot:active { background: #1a2a40; }
-    .slot-label { font-size: 0.55rem; color: #4a5568; }
-    .slot-card-text { font-size: 1.25rem; font-weight: bold; line-height: 1; }
-    .slot-card-text.red   { color: #f87171; }
-    .slot-card-text.black { color: #e0e6f0; }
-    .hand-clear-btn {
-      font-size: 0.62rem; color: #4a5568;
-      background: none; border: 1px solid #2a3a50;
-      border-radius: 5px; padding: 4px 8px;
-      cursor: pointer; font-family: inherit;
-      flex-shrink: 0; -webkit-tap-highlight-color: transparent;
-    }
-    .hand-clear-btn:active { color: #f87171; }
-
     /* ── 次のハンドボタン ── */
     .next-btn {
       flex-shrink: 0;
@@ -188,70 +145,6 @@
       max-width: 420px; width: 100%; align-self: center;
     }
     .next-btn:active { background: #1e3a9f; }
-
-    /* ── カード入力モーダル ── */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.65); z-index: 100;
-      align-items: flex-end; justify-content: center;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal-sheet {
-      background: #111827; border: 1px solid #1e2a3a;
-      border-radius: 20px 20px 0 0;
-      padding: 18px 18px 32px;
-      width: 100%; max-width: 420px;
-      animation: slideUp 0.2s ease;
-    }
-    @keyframes slideUp {
-      from { transform: translateY(30px); opacity: 0; }
-      to   { transform: translateY(0);    opacity: 1; }
-    }
-    .modal-drag { width: 36px; height: 4px; background: #2a3a50; border-radius: 2px; margin: 0 auto 14px; }
-    .modal-title { font-size: 0.75rem; color: #4a90d9; font-weight: bold; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px; text-align: center; }
-    .modal-slots { display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; }
-    .modal-slot {
-      width: 80px; height: 54px;
-      border: 2px dashed #2a3a50; border-radius: 10px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      cursor: pointer; gap: 2px;
-      transition: border-color 0.15s, background 0.15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .modal-slot.active  { border-color: #2563eb; background: #0e1e40; }
-    .modal-slot.filled  { border-style: solid; border-color: #2a4a6a; background: #0d1a2a; }
-    .modal-slot.filled.active { border-color: #2563eb; }
-    .modal-slot-label { font-size: 0.58rem; color: #4a5568; }
-    .modal-slot-text  { font-size: 1.4rem; font-weight: bold; line-height: 1; }
-    .modal-slot-text.red   { color: #f87171; }
-    .modal-slot-text.black { color: #e0e6f0; }
-    .picker-label { font-size: 0.65rem; color: #4a5568; margin-bottom: 7px; font-weight: bold; letter-spacing: 0.04em; }
-    .rank-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 10px; }
-    .rank-btn, .suit-btn {
-      padding: 9px 0; background: #0d1420; border: 1px solid #2a3a50;
-      border-radius: 7px; color: #d1d9e6; font-size: 0.88rem; font-weight: bold;
-      cursor: pointer; text-align: center; transition: background 0.1s;
-      -webkit-tap-highlight-color: transparent; font-family: inherit;
-    }
-    .rank-btn.selected { background: #1d3460; border-color: #2563eb; color: #93c5fd; }
-    .rank-btn.disabled { opacity: 0.22; pointer-events: none; }
-    .suit-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
-    .suit-btn { font-size: 1.25rem; padding: 10px 0; }
-    .suit-btn.red   { color: #f87171; }
-    .suit-btn.black { color: #e0e6f0; }
-    .suit-btn.disabled { opacity: 0.22; pointer-events: none; }
-    .modal-actions { display: flex; gap: 10px; }
-    .modal-clear-btn {
-      flex: 1; padding: 11px; background: none; border: 1px solid #2a3a50;
-      border-radius: 9px; color: #8899aa; font-size: 0.85rem; font-weight: bold;
-      cursor: pointer; font-family: inherit;
-    }
-    .modal-done-btn {
-      flex: 2; padding: 11px; background: #1d4ed8; border: none;
-      border-radius: 9px; color: white; font-size: 0.85rem; font-weight: bold;
-      cursor: pointer; font-family: inherit;
-    }
-    .modal-done-btn:active { background: #1e3a9f; }
   </style>
 </head>
 <body>
@@ -269,63 +162,12 @@
       </div>
     </div>
   </div>
-
-  <!-- 自分のハンド -->
-  <div class="hand-bar">
-    <span class="hand-bar-label">🂠 自分のハンド</span>
-    <div class="card-slots">
-      <div class="card-slot" id="bar-slot-0" onclick="openModal(0)">
-        <span class="slot-label">1枚目</span>
-        <span class="slot-card-text" id="bar-slot-0-text">　</span>
-      </div>
-      <div class="card-slot" id="bar-slot-1" onclick="openModal(1)">
-        <span class="slot-label">2枚目</span>
-        <span class="slot-card-text" id="bar-slot-1-text">　</span>
-      </div>
-    </div>
-    <button class="hand-clear-btn" onclick="clearHand()">クリア</button>
-  </div>
-
   <!-- 次のハンド -->
   <button class="next-btn" onclick="nextHand()">次のハンド →</button>
-
-  <!-- カード入力モーダル -->
-  <div class="modal-overlay" id="modal-overlay" onclick="onOverlayClick(event)">
-    <div class="modal-sheet">
-      <div class="modal-drag"></div>
-      <div class="modal-title">手札を選択</div>
-      <div class="modal-slots">
-        <div class="modal-slot active" id="mslot-0" onclick="selectSlot(0)">
-          <span class="modal-slot-label">1枚目</span>
-          <span class="modal-slot-text" id="mslot-0-text">　</span>
-        </div>
-        <div class="modal-slot" id="mslot-1" onclick="selectSlot(1)">
-          <span class="modal-slot-label">2枚目</span>
-          <span class="modal-slot-text" id="mslot-1-text">　</span>
-        </div>
-      </div>
-      <div class="picker-label">ランク</div>
-      <div class="rank-grid" id="rank-grid"></div>
-      <div class="picker-label">スーツ</div>
-      <div class="suit-grid">
-        <button class="suit-btn black" data-suit="♠" onclick="selectSuit('♠')">♠</button>
-        <button class="suit-btn red"   data-suit="♥" onclick="selectSuit('♥')">♥</button>
-        <button class="suit-btn red"   data-suit="♦" onclick="selectSuit('♦')">♦</button>
-        <button class="suit-btn black" data-suit="♣" onclick="selectSuit('♣')">♣</button>
-      </div>
-      <div class="modal-actions">
-        <button class="modal-clear-btn" onclick="clearModalHand()">クリア</button>
-        <button class="modal-done-btn"  onclick="closeModal()">完了</button>
-      </div>
-    </div>
-  </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
-  const RANKS     = ['A','K','Q','J','T','9','8','7','6','5','4','3','2'];
-  const RED_SUITS = new Set(['♥','♦']);
-
   const POS_MAP = {
     2:  [{key:'btn',label:'BTN'},{key:'bb',label:'BB'}],
     3:  [{key:'btn',label:'BTN'},{key:'sb',label:'SB'},{key:'bb',label:'BB'}],
@@ -345,10 +187,6 @@
   let playerCount = 6;
   let dealerSeat  = 1;
   let mySeat      = 1;
-  let myCards     = [null, null];
-  let activeSlot  = 0;
-  let pendingRank = null;
-  let modalCards  = [null, null];
 
   /* ── Firebase ── */
   firebase.initializeApp({
@@ -363,7 +201,7 @@
   const docRef = db.collection('data').doc('amuse-counter');
 
   function save() {
-    docRef.set({ playerCount, dealerSeat, mySeat, myCards })
+    docRef.set({ playerCount, dealerSeat, mySeat })
       .catch(err => console.error('保存エラー:', err.message));
   }
 
@@ -409,30 +247,12 @@
       `;
       wrap.appendChild(div);
     }
-    renderHandBar();
   }
 
   function setMySeat(seatNum) {
     mySeat = seatNum;
     render(); save();
   }
-
-  function renderHandBar() {
-    for (let i = 0; i < 2; i++) {
-      const slotEl = document.getElementById(`bar-slot-${i}`);
-      const textEl = document.getElementById(`bar-slot-${i}-text`);
-      const card   = myCards[i];
-      slotEl.className = 'card-slot' + (card ? ' filled' : '');
-      if (card) {
-        textEl.className   = 'slot-card-text ' + (RED_SUITS.has(card.suit) ? 'red' : 'black');
-        textEl.textContent = card.rank + card.suit;
-      } else {
-        textEl.className   = 'slot-card-text';
-        textEl.textContent = '　';
-      }
-    }
-  }
-
   function changeCount(delta) {
     const next = playerCount + delta;
     if (next < 2 || next > 10) return;
@@ -443,78 +263,9 @@
 
   function nextHand() {
     dealerSeat = (dealerSeat % playerCount) + 1;
-    myCards = [null, null];
     render(); save();
   }
 
-  function clearHand() {
-    myCards = [null, null];
-    renderHandBar(); save();
-  }
-
-  /* ── モーダル ── */
-  function openModal(startSlot = 0) {
-    modalCards  = [myCards[0] ? { ...myCards[0] } : null, myCards[1] ? { ...myCards[1] } : null];
-    activeSlot  = startSlot;
-    pendingRank = null;
-    document.getElementById('modal-overlay').classList.add('open');
-    refreshModal();
-  }
-
-  function closeModal() {
-    myCards = [...modalCards];
-    document.getElementById('modal-overlay').classList.remove('open');
-    renderHandBar(); save();
-  }
-
-  function onOverlayClick(e) {
-    if (e.target === document.getElementById('modal-overlay')) closeModal();
-  }
-
-  function clearModalHand() {
-    modalCards = [null, null]; pendingRank = null; activeSlot = 0;
-    refreshModal();
-  }
-
-  function selectSlot(idx)  { activeSlot = idx; pendingRank = null; refreshModal(); }
-  function selectRank(rank) { pendingRank = rank; refreshModal(); }
-
-  function selectSuit(suit) {
-    if (!pendingRank) return;
-    modalCards[activeSlot] = { rank: pendingRank, suit };
-    pendingRank = null;
-    const other = 1 - activeSlot;
-    if (!modalCards[other]) activeSlot = other;
-    refreshModal();
-  }
-
-  function refreshModal() {
-    for (let i = 0; i < 2; i++) {
-      const slotEl = document.getElementById(`mslot-${i}`);
-      const textEl = document.getElementById(`mslot-${i}-text`);
-      const card   = modalCards[i];
-      const active = activeSlot === i;
-      slotEl.className = 'modal-slot' + (card ? ' filled' : '') + (active ? ' active' : '');
-      if (card) {
-        textEl.className   = 'modal-slot-text ' + (RED_SUITS.has(card.suit) ? 'red' : 'black');
-        textEl.textContent = card.rank + card.suit;
-      } else if (pendingRank && active) {
-        textEl.className   = 'modal-slot-text black';
-        textEl.textContent = pendingRank + ' ?';
-      } else {
-        textEl.className   = 'modal-slot-text';
-        textEl.textContent = '　';
-      }
-    }
-    const usedCard = modalCards[1 - activeSlot];
-    const usedStr  = usedCard ? usedCard.rank + usedCard.suit : null;
-    document.getElementById('rank-grid').innerHTML = RANKS.map(r =>
-      `<button class="rank-btn${pendingRank === r ? ' selected' : ''}" onclick="selectRank('${r}')">${r}</button>`
-    ).join('');
-    document.querySelectorAll('.suit-btn').forEach(btn => {
-      btn.classList.toggle('disabled', !!(pendingRank && (pendingRank + btn.dataset.suit) === usedStr));
-    });
-  }
 
   /* ── 初期ロード ── */
   docRef.onSnapshot(snap => {
@@ -523,7 +274,6 @@
       playerCount = d.playerCount ?? 6;
       dealerSeat  = d.dealerSeat  ?? 1;
       mySeat      = d.mySeat      ?? 1;
-      myCards     = d.myCards     ?? [null, null];
     }
     render();
   });
