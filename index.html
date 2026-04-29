@@ -280,9 +280,19 @@
     render(); save();
   }
 
+  function bluffFrequency(count) {
+    const minPlayers = 2;
+    const maxPlayers = 10;
+    const minRate = 0.02;
+    const maxRate = 0.30;
+    const clamped = Math.min(maxPlayers, Math.max(minPlayers, count));
+    const t = (clamped - minPlayers) / (maxPlayers - minPlayers);
+    return maxRate - (maxRate - minRate) * t;
+  }
+
   function nextHand() {
     dealerSeat = (dealerSeat % playerCount) + 1;
-    showBluffPrompt = Math.random() < 0.2;
+    showBluffPrompt = Math.random() < bluffFrequency(playerCount);
     render(); save();
   }
 
