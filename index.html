@@ -145,6 +145,22 @@
       max-width: 420px; width: 100%; align-self: center;
     }
     .next-btn:active { background: #1e3a9f; }
+    .bluff-message {
+      display: none;
+      flex-shrink: 0;
+      max-width: 420px;
+      width: 100%;
+      align-self: center;
+      padding: 12px 14px;
+      border: 1px solid rgba(245,158,11,0.45);
+      border-radius: 11px;
+      background: rgba(245,158,11,0.12);
+      color: #fbbf24;
+      font-size: 0.9rem;
+      font-weight: bold;
+      text-align: center;
+    }
+    .bluff-message.show { display: block; }
   </style>
 </head>
 <body>
@@ -163,6 +179,7 @@
     </div>
   </div>
   <!-- 次のハンド -->
+  <div class="bluff-message" id="bluff-message">このハンドではブラフをしてください</div>
   <button class="next-btn" onclick="nextHand()">次のハンド →</button>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -187,6 +204,7 @@
   let playerCount = 6;
   let dealerSeat  = 1;
   let mySeat      = 1;
+  let showBluffPrompt = false;
 
   /* ── Firebase ── */
   firebase.initializeApp({
@@ -201,7 +219,7 @@
   const docRef = db.collection('data').doc('amuse-counter');
 
   function save() {
-    docRef.set({ playerCount, dealerSeat, mySeat })
+    docRef.set({ playerCount, dealerSeat, mySeat, showBluffPrompt })
       .catch(err => console.error('保存エラー:', err.message));
   }
 
@@ -220,6 +238,7 @@
     document.getElementById('player-num').textContent = playerCount;
     document.getElementById('btn-minus').disabled = playerCount <= 2;
     document.getElementById('btn-plus').disabled  = playerCount >= 10;
+    document.getElementById('bluff-message').classList.toggle('show', showBluffPrompt);
 
     const wrap = document.getElementById('table-wrap');
     wrap.querySelectorAll('.seat').forEach(el => el.remove());
@@ -263,6 +282,7 @@
 
   function nextHand() {
     dealerSeat = (dealerSeat % playerCount) + 1;
+    showBluffPrompt = Math.random() < 0.2;
     render(); save();
   }
 
@@ -274,6 +294,7 @@
       playerCount = d.playerCount ?? 6;
       dealerSeat  = d.dealerSeat  ?? 1;
       mySeat      = d.mySeat      ?? 1;
+      showBluffPrompt = d.showBluffPrompt ?? false;
     }
     render();
   });
